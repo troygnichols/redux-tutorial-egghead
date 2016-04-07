@@ -4,6 +4,8 @@
 // `todos` reducer calls `todo` reducer to handle
 // an inividual todo in the collection.
 const todo = (state, action) => {
+  console.log('todo reducer called, with state, action: ', state, action);
+
   switch (action.type) {
     case 'ADD_TODO':
       return {
@@ -25,6 +27,8 @@ const todo = (state, action) => {
 };
 
 const todos = (state = [], action) => {
+  console.log('todos reducer called, with state, action: ', state, action);
+
   switch (action.type) {
     case 'ADD_TODO':
       return [
@@ -62,7 +66,30 @@ const visibilityFilter = (state = 'SHOW_ALL', action) => {
 
 // Rather than write our own reducer that combines multiple reducers as above,
 // we can use the conveneice method provided by Redux: `combineReducers`.
-const { combineReducers } = Redux;
+// const { combineReducers } = Redux;
+
+// Re-implement combineReducers to understand how it works
+const combineReducers = (reducers) => {
+  console.log('in combineReducers, with reducers: ', reducers);
+
+  return (state = {}, action) => {
+    console.log('in main reducer function, state, action: ', state, action);
+
+    return Object.keys(reducers).reduce(
+      (nextState, key) => {
+        console.log('inside reduce, key, nextState: ', key, nextState);
+
+        nextState[key] = reducers[key](
+          state[key], action
+        );
+
+        return nextState;
+      },
+      {}
+    );
+  }
+};
+
 const todoApp = combineReducers({
   // todos: todos,
   // visibilityFilter: visibilityFilter
